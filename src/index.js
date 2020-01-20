@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 //import { Router } from 'react-router';
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
 //import {} from  '';
 import './style.css';
 import { data } from './data.js';
@@ -10,14 +12,14 @@ import { data } from './data.js';
 const NewTitle = (props) => {
   const { data } = props;
   return (
-    <>
+    <div className="article">
       <p>
         {data.title}
       </p>
       <p>
         {data.text}
       </p>
-    </>
+    </div>
   )
 }
 
@@ -33,15 +35,15 @@ class Article extends React.Component {
   render(){
   const { data } = this.props;
   return (
-    <>
+    <div className="article">
       <p>
         {data.title}
       </p>
       <p>
         {data.text}
       </p>
-      <a onClick={this.handleReadMoreClck} href="#" className='news__readmore'>Подробнее</a>
-    </>
+      <a onClick={this.handleReadMoreClck} href="#aaa" className='news__readmore'>Подробнее</a>
+    </div>
   )
     }
 }
@@ -76,9 +78,9 @@ class App extends React.Component {
     this.setState({ isTitle: false })
   }
 
-  clickTitle = (a) => {
+  clickTitle = (e) => {
     this.setState({ isTitle: true })
-    this.setState({ idTitle: a })
+    this.setState({ idTitle: e })
   }
 
   render () {
@@ -99,9 +101,22 @@ class App extends React.Component {
     }     
   }
 }
+
+//-------------------------------------------
+
+const initialState = {
+  user: 'Unknown User',
+}
+function rootReducer(state = initialState) {
+  return state
+}
+const store = createStore(rootReducer, initialState)
+
 //-------------------------------------------
   
 ReactDOM.render(
-  <App  data = {data}/>,
+  <Provider store={store}>
+  <App data = {data}/>
+  </Provider>,
   document.getElementById('root')
 );
