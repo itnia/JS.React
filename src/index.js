@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 //import { Router } from 'react-router';
 import { createStore } from 'redux'
-import { Provider } from 'react-redux'
-//import {} from  '';
+//import { Provider } from 'react-redux'
 import './style.css';
 import { data } from './data.js';
+import { reducer } from './reducer';
 
 //-------------------------------------------  cd my-app     npm start
 
@@ -23,17 +23,14 @@ const NewTitle = (props) => {
   )
 }
 
-//-------------------------------------------
+const Article = (props) => {
 
-class Article extends React.Component {
-
-  handleReadMoreClck = (e) => {
-    e.preventDefault()
-    this.props.clickTitle(this.props.data.id)
+  const clickTitle = () => {
+    store.dispatch(isTitle(true))
+    store.dispatch(idTitle(props.data.id))
   }
 
-  render(){
-  const { data } = this.props;
+  const { data } = props;
   return (
     <div className="article">
       <p>
@@ -42,13 +39,10 @@ class Article extends React.Component {
       <p>
         {data.text}
       </p>
-      <a onClick={this.handleReadMoreClck} href="#aaa" className='news__readmore'>Подробнее</a>
+      <a onClick={clickTitle} href="#aaa" className='news__readmore'>Подробнее</a>
     </div>
   )
-    }
 }
-
-//-------------------------------------------
 
 const NewsGroup = (props) => {
   const { data } = props;
@@ -56,7 +50,7 @@ const NewsGroup = (props) => {
 
   if( data.length ){
     newsTemplate = data.map(function(item) {
-      return <Article key={item.id} data={item} clickTitle={props.clickTitle}/>
+      return <Article key={item.id} data={item}/>
     })
   } else {
     newsTemplate = <p>К сожалению новостей нет</p>
@@ -65,37 +59,28 @@ const NewsGroup = (props) => {
   return  newsTemplate;
 }
 
-//-------------------------------------------
-
 class App extends React.Component {
-  state = {
-    idTitle: 0,
-    isTitle: false
+
+  componentDidMount(){
+    store.subscribe(() => this.forceUpdate());
   }
 
-  clickExit = (e) => {
-    e.preventDefault()
-    this.setState({ isTitle: false })
-  }
-
-  clickTitle = (e) => {
-    this.setState({ isTitle: true })
-    this.setState({ idTitle: e })
+  clickExit = () => {
+    store.dispatch(isTitle(false))
   }
 
   render () {
-
-    if(!this.state.isTitle){
+    if( !store.getState().isTitle ){
       return (
         <>
-        <NewsGroup data = {this.props.data} clickTitle = {this.clickTitle}/>
+        <NewsGroup data = {this.props.data}/>
         </>
       )
     } else {
       return (
         <>
         <button onClick = {this.clickExit}>Exit</button>
-        <NewTitle data = {this.props.data[this.state.idTitle]}/>
+        <NewTitle data = {this.props.data[store.getState().idTitle]}/>
         </>
       )
     }     
@@ -105,18 +90,18 @@ class App extends React.Component {
 //-------------------------------------------
 
 const initialState = {
-  user: 'Unknown User',
-}
-function rootReducer(state = initialState) {
-  return state
-}
-const store = createStore(rootReducer, initialState)
+  idTitle: 0,
+  isTitle: false
+};
+
+const store = createStore(reducer, initialState);
+
+const isTitle = (isTitle) => ({type: 'IS_TITLE', isTitle});
+const idTitle = (idTitle) => ({type: 'ID_TITLE', idTitle});
 
 //-------------------------------------------
   
 ReactDOM.render(
-  <Provider store={store}>
-  <App data = {data}/>
-  </Provider>,
+  <App data = {data}/>,
   document.getElementById('root')
 );
