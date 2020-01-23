@@ -5,14 +5,20 @@ import { createStore } from 'redux'
 //import { Provider } from 'react-redux'
 import './style.css';
 import { data } from './data.js';
-import { reducer } from './reducer';
+import { reducer, isTitle, idTitle } from './reducer';
 
 //-------------------------------------------  cd my-app     npm start
 
 const NewTitle = (props) => {
+
+  const  clickExit = () => {
+    store.dispatch(isTitle(false))
+  }
+
   const { data } = props;
   return (
     <div className="article">
+      <button onClick = {clickExit}>Exit</button>
       <p>
         {data.title}
       </p>
@@ -65,10 +71,6 @@ class App extends React.Component {
     store.subscribe(() => this.forceUpdate());
   }
 
-  clickExit = () => {
-    store.dispatch(isTitle(false))
-  }
-
   render () {
     if( !store.getState().isTitle ){
       return (
@@ -78,8 +80,7 @@ class App extends React.Component {
       )
     } else {
       return (
-        <>
-        <button onClick = {this.clickExit}>Exit</button>
+        <>        
         <NewTitle data = {this.props.data[store.getState().idTitle]}/>
         </>
       )
@@ -95,10 +96,6 @@ const initialState = {
 };
 
 const store = createStore(reducer, initialState);
-
-const isTitle = (isTitle) => ({type: 'IS_TITLE', isTitle});
-const idTitle = (idTitle) => ({type: 'ID_TITLE', idTitle});
-
 //-------------------------------------------
   
 ReactDOM.render(

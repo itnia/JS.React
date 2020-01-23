@@ -5,3 +5,6 @@ export function reducer(state, action){
         default: return state;
     }
 }
+
+export const isTitle = (isTitle) => ({type: 'IS_TITLE', isTitle});
+export const idTitle = (idTitle) => ({type: 'ID_TITLE', idTitle});
